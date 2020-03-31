@@ -409,7 +409,7 @@ void main(){
 	else if((strncmp(sentence, "dump", 4)==0)||(strncmp(sentence, "du", 2)==0)){
 	    dump_slice_str(index); 
 	    if(start_appear==false && end_appear==false){
-		if(start+175>addrend){
+		if(startaddress+175>addrend){
 		  dump_func(startaddress, addrend);
 		  startaddress=0;
 		}
