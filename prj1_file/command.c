@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include <dirent.h>
 #include <sys/stat.h>
 #include "slice.h"
@@ -55,6 +56,24 @@ void dir_func(){
       }
       closedir(directory);
    }
+}
+
+//function called when the command is 'quit' or 'q'
+//free all the dynamically allocated memory
+void quit_func(){
+	while(history_head!=NULL){
+		str_node *temp=history_head;
+		history_head=history_head->ptr;
+		free(temp);
+	}
+	for(int i=0;i<20;i++){
+		op_node *walk=hash_table[i];
+		while(walk!=NULL){
+			op_node *temp=walk;
+			walk=walk->ptr;
+			free(temp);
+		}
+	}
 }
 
 //funcion called when the command is 'history' or 'hi'

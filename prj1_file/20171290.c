@@ -25,7 +25,7 @@ int main(){
     	}
 		sentence[index]='\0';
 		if((strncmp(sentence, "help",4)==0)||((strncmp(sentence, "h",1)==0)&&index==1)){
-	    	push(sentence, index);
+	    	push(sentence, index);	//add the command to history linked list
 	    	help_func();
 		}
 		else if((strncmp(sentence, "dir",3)==0)||((strncmp(sentence,"d",1)==0)&&index==1)){
@@ -33,7 +33,8 @@ int main(){
             dir_func();
 		}
 		else if((strncmp(sentence, "quit", 4)==0)||(strncmp(sentence, "q", 1)==0)){
-		    break;
+		    quit_func();
+			break;
 		}
 		else if((strncmp(sentence, "history", 7)==0)||(strncmp(sentence, "hi", 2)==0)){
             push(sentence, index);
@@ -42,7 +43,7 @@ int main(){
 		else if(((strncmp(sentence, "dump", 4)==0)&&index==4)||(strncmp(sentence, "dump ", 5)==0)
 					||((strncmp(sentence, "du", 2)==0)&&index==2)||(strncmp(sentence, "du ", 3)==0)){
 	    	dump_slice_str(index); 
-	    	if(start_appear==false && end_appear==false){
+	    	if(start_appear==false && end_appear==false){	//when the command is 'dump'
 				if(startaddress+159>addrend){
 		 			dump_func(startaddress, addrend);
 		  			startaddress=0;
@@ -52,7 +53,7 @@ int main(){
 		  			startaddress+=160;
 				}
 	    	}
-	    	else if (start_appear==true && end_appear==false){
+	    	else if (start_appear==true && end_appear==false){	//when the command is given with the start address
                 if(start<0 || start>addrend){		//check the memory access error
 		   			printf("bounded error\n");
 		   			continue;
@@ -60,7 +61,7 @@ int main(){
 				else if(start+159>addrend) dump_func(start, addrend);
 				else dump_func(start, start+159);
 	    	}
-	    	else if (start_appear==true && end_appear==true){
+	    	else if (start_appear==true && end_appear==true){	//when the command is given with the start and end address
 				if(end<start || start<0 || start>addrend || end<0 || end>addrend){		//check the memory acess error
 		   			printf("bounded error\n");
 		   			continue;
@@ -106,7 +107,7 @@ int main(){
 		else if(strncmp(sentence, "opcode", 6)==0){
 	    	char *command=NULL, copy[100];
 			strncpy(copy,sentence,strlen(sentence));	//copy the command for history
- 	    	//find the assembly command
+ 	    	//extract mnemonic
 			strtok(sentence," ");
 	    	command=strtok(NULL, " ");
 	   	 	int ret=opcode_func(command);

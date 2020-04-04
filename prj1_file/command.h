@@ -1,6 +1,7 @@
 void init_memory();
 void help_func();
 void dir_func();
+void quit_func();
 void history_func();
 void dump_func();
 void edit_func();
