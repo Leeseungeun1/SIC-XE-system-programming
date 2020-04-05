@@ -17,6 +17,7 @@ typedef struct op_node{
 }op_node;
 
 str_node *history_head;  //head pointer of history linked list
+str_node *history_tail;  //tail pointer of history linked list
 
 int historynum;      //number of commands
 int startaddress;    //store the address when the command is only dump.

@@ -30,8 +30,14 @@ void push(char* str, int index){
     new->index=historynum++;
     strncpy(new->sentence, str, index);
     (new->sentence)[index]='\0';
-    new->ptr=history_head;
-	history_head=new;
+	new->ptr=NULL;
+	 if(history_head==NULL){
+		history_head=new;
+	}
+	if(history_tail!=NULL){
+		history_tail->ptr=new;
+	}
+	history_tail=new;
 }
 
 //check if the two strings are same
@@ -47,6 +53,7 @@ boolean subcmp(int start, int end, char* str1, char* str2){
 //init the global variable when the program is initiated.
 void init_global_variable(){
 	history_head=NULL;
+	history_tail=NULL;
 	historynum=1;
 	startaddress=0;
 	opcode_file_error=false;
