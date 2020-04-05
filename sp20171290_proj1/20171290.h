@@ -17,7 +17,6 @@ typedef struct op_node{
 }op_node;
 
 str_node *history_head;  //head pointer of history linked list
-str_node *history_tail;  //tail pointer of history linked list
 
 int historynum;      //number of commands
 int startaddress;    //store the address when the command is only dump.
@@ -30,4 +29,4 @@ boolean opcode_file_error;   //flag to check the existence of the file.
 boolean start_appear;	//flag to check the existence of start argument.	
 boolean end_appear;		//flag to check the existence of end argument.
 boolean value_appear;	//flag to check the existence of value argument.
-int start, end, value;
+int start, end, value;  //store the start, end, value as decimal number

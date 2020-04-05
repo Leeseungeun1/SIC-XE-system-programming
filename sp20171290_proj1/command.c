@@ -40,7 +40,7 @@ void dir_func(){
    DIR *directory;
    struct stat buf;
    struct dirent *file = NULL;
-   directory = opendir("./");
+   directory = opendir("./");   //get whole file information in current directory.
    if(directory!=NULL){
       while((file=readdir(directory))!=NULL){
         int length=strlen(file->d_name);
@@ -61,11 +61,13 @@ void dir_func(){
 //function called when the command is 'quit' or 'q'
 //free all the dynamically allocated memory
 void quit_func(){
+	//free history linked list
 	while(history_head!=NULL){
 		str_node *temp=history_head;
 		history_head=history_head->ptr;
 		free(temp);
 	}
+	//free opcode hast table linked list
 	for(int i=0;i<20;i++){
 		op_node *walk=hash_table[i];
 		while(walk!=NULL){
@@ -83,7 +85,7 @@ void history_func(){
     str_node* walk=history_head;
 
     while(walk!=NULL){
-	printf("%d %s\n", walk->index, walk->sentence);
+		printf("%d %s\n", walk->index, walk->sentence);
         walk=walk->ptr;
     }
 }
@@ -130,10 +132,10 @@ void dump_func(int startidx, int endidx){
 		//print the middle part of the memory
 	    else if((startx<address)&&(address<endx)){
 			for(i=0;i<16;i++){
-        		upper=(mem[address][i]>>4);
+        		upper=(mem[address][i]>>4);  //find the upper half bits of the memory
 		    	if(upper<10) printf("%c", upper+'0');
             	else printf("%c", 'A'+(upper-10));
-            	lower=(mem[address][i]&15);
+            	lower=(mem[address][i]&15);  //find the lower half bits of the memory
 		    	if(lower<10) printf("%c ", lower+'0');
             	else printf("%c ", 'A'+(lower-10));
         	}
@@ -144,10 +146,10 @@ void dump_func(int startidx, int endidx){
             	if(i>endy){
                 	printf("   "); continue;  //don't print the out of range memory
                 }
-                upper=(mem[address][i]>>4);
+                upper=(mem[address][i]>>4);  //find the upper half bits of the memory
                 if(upper<10) printf("%c", upper+'0');
                 else printf("%c", 'A'+(upper-10));
-                lower=(mem[address][i]&15);
+                lower=(mem[address][i]&15);  //find the lower half bits of the memory
                 if(lower<10) printf("%c ", lower+'0');
                 else printf("%c ", 'A'+(lower-10));
             }
@@ -155,8 +157,8 @@ void dump_func(int startidx, int endidx){
 	    printf(";");
 		//print the character of the memory
         for(i=0;i<16;i++){
+			//print '.' if there are no ascii codes matched with the value or out of range of required memory part.
 			if(mem[address][i]<20||mem[address][i]>126||(address==startx&&i<starty)||(address==endx&&i>endy)) printf(".");
-			//print '.' if there are no ascii codes matched with the value or out of range memory part.
             else printf("%c",mem[address][i]);
         }
         printf("\n");
@@ -181,10 +183,10 @@ void fill_func(){
     int endy=end%16;
     int i, j;
     for(i=startx;i<=endx;i++){
-	for(j=0;j<16;j++){
-	    if((i==startx&&j<starty)||(i==endx&&j>endy)) continue;
-	    mem[i][j]=value;
-	}
+		for(j=0;j<16;j++){
+	   		if((i==startx&&j<starty)||(i==endx&&j>endy)) continue;
+	    	mem[i][j]=value;
+		}
     }
 }
 
@@ -193,15 +195,15 @@ void fill_func(){
 void opcode_list_func(){
     int i;
     for(i=0;i<20;i++){
-	printf("%d : ", i);
-	if(hash_table[i]==NULL)	{ printf("\n");  continue; }
-	op_node* walk=hash_table[i];
-	while(walk!=NULL){
-	    printf("[%s, %s]",walk->command, walk->hexa);
-	    if(walk->ptr!=NULL) printf(" -> ");
-	    walk=walk->ptr;
-	}
-	printf("\n"); 
+		printf("%d : ", i);
+		if(hash_table[i]==NULL)	{ printf("\n");  continue; }
+		op_node* walk=hash_table[i];
+		while(walk!=NULL){
+	    	printf("[%s, %s]",walk->command, walk->hexa);
+	    	if(walk->ptr!=NULL) printf(" -> ");
+	    	walk=walk->ptr;
+		}
+		printf("\n"); 
     }
 }
 

@@ -6,7 +6,7 @@
 #include "command.h"
 #include "slice.h"
 #include "subfunc.h"
-#define addrend 1048575
+#define addrend 1048575   //end of the virtual memory address
 
 //the main function
 int main(){
@@ -14,7 +14,7 @@ int main(){
     init_memory();
     build_hash_table();
     if(opcode_file_error==true) return 0;
-    while(1){
+    while(1){				//keep showing the command prompt until the user quits the program.
 		start_appear=false; end_appear=false; value_appear=false;
     	start=0; end=0; value=0;
 		printf("sicsim>");
@@ -29,7 +29,7 @@ int main(){
 	    	help_func();
 		}
 		else if((strncmp(sentence, "dir",3)==0)||((strncmp(sentence,"d",1)==0)&&index==1)){
-	    	push(sentence, index);
+	    	push(sentence, index);  //add the command to history linked list
             dir_func();
 		}
 		else if((strncmp(sentence, "quit", 4)==0)||(strncmp(sentence, "q", 1)==0)){
@@ -37,20 +37,20 @@ int main(){
 			break;
 		}
 		else if((strncmp(sentence, "history", 7)==0)||(strncmp(sentence, "hi", 2)==0)){
-            push(sentence, index);
+            push(sentence, index);  //add the command to history linked lsit
             history_func();
         }
 		else if(((strncmp(sentence, "dump", 4)==0)&&index==4)||(strncmp(sentence, "dump ", 5)==0)
 					||((strncmp(sentence, "du", 2)==0)&&index==2)||(strncmp(sentence, "du ", 3)==0)){
-	    	dump_slice_str(index); 
+	    	dump_slice_str(index);   //parsing the arguments
 	    	if(start_appear==false && end_appear==false){	//when the command is 'dump'
-				if(startaddress+159>addrend){
+				if(startaddress+159>addrend){ 		//when the 160 memories from start address exceed the given virtual memory.
 		 			dump_func(startaddress, addrend);
 		  			startaddress=0;
 				}
 				else{
 			  		dump_func(startaddress, startaddress+159);
-		  			startaddress+=160;
+		  			startaddress+=160;    //store the next start address
 				}
 	    	}
 	    	else if (start_appear==true && end_appear==false){	//when the command is given with the start address
@@ -68,10 +68,10 @@ int main(){
 				}
 				else dump_func(start, end);
 	    	}		
-	    	push(sentence, index);
+	    	push(sentence, index);   //add th command to history linked list
 		}
 		else if((strncmp(sentence, "edit ", 5)==0)||(strncmp(sentence, "e ", 2)==0)){
-	    	edit_slice_str(index);
+	    	edit_slice_str(index);  //parsing arguments
 	    	if(start_appear*value_appear==0){		//check if the command is correct
 				printf("Pleas put two arguments or split arguments with comma.\n");
 	 			continue;
@@ -81,10 +81,10 @@ int main(){
 				continue;	
 	    	}
 	    	edit_func();
-	    	push(sentence, index);
+	    	push(sentence, index);  //add the command to history linked list
 		}
         else if((strncmp(sentence, "fill ", 5)==0)||(strncmp(sentence, "f ", 2)==0)){
-	    	fill_slice_str(index);
+	    	fill_slice_str(index);  //parsing arguments
 	    	if(start_appear*value_appear*end_appear==0){ 		//check if the command is correct
 				printf("Please put three arguments or split arguments with comma.\n");
 				continue;
@@ -94,15 +94,15 @@ int main(){
 				continue;
 	    	}
 	    	fill_func();
-	    	push(sentence, index);
+	    	push(sentence, index);  //add the command to history linked list
 		}
 		else if(strncmp(sentence, "reset", 5)==0){
 	    	init_memory();
-	    	push(sentence, index);
+	    	push(sentence, index);  //add the command to history linked list
 		}
 		else if(strncmp(sentence, "opcodelist", 10)==0){
 	    	opcode_list_func();
-	    	push(sentence, index);
+	    	push(sentence, index);  //add the command to history linked list
 		}
 		else if(strncmp(sentence, "opcode", 6)==0){
 	    	char *command=NULL, copy[100];
@@ -111,8 +111,9 @@ int main(){
 			strtok(sentence," ");
 	    	command=strtok(NULL, " ");
 	   	 	int ret=opcode_func(command);
-            if(ret==0) push(copy, index);
+            if(ret==0) push(copy, index);  //add the command to history linked list
+										   //if there was opcode of the given mnemonic
 		}
-		else printf("Command not found\n");	
+		else printf("Command not found\n"); //wrong command	
     }
 }
