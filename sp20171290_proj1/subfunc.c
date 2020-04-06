@@ -58,4 +58,5 @@ void init_global_variable(){
 	historynum=1;
 	startaddress=0;
 	opcode_file_error=false;
+	parameter_error=false;
 }

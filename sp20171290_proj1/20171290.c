@@ -15,7 +15,7 @@ int main(){
     build_hash_table();
     if(opcode_file_error==true) return 0;
     while(1){				//keep showing the command prompt until the user quits the program.
-		start_appear=false; end_appear=false; value_appear=false;
+		start_appear=false; end_appear=false; value_appear=false; parameter_error=false;
     	start=0; end=0; value=0;
 		printf("sicsim>");
     	char c;
@@ -24,25 +24,29 @@ int main(){
        	   sentence[index++]=c;
     	}
 		sentence[index]='\0';
-		if((strncmp(sentence, "help",4)==0)||((strncmp(sentence, "h",1)==0)&&index==1)){
+		if((strcmp(sentence, "help")==0)||(strcmp(sentence, "h")==0)){
 	    	push(sentence, index);	//add the command to history linked list
 	    	help_func();
 		}
-		else if((strncmp(sentence, "dir",3)==0)||((strncmp(sentence,"d",1)==0)&&index==1)){
+		else if((strcmp(sentence, "dir")==0)||(strcmp(sentence,"d")==0)){
 	    	push(sentence, index);  //add the command to history linked list
             dir_func();
 		}
-		else if((strncmp(sentence, "quit", 4)==0)||(strncmp(sentence, "q", 1)==0)){
+		else if((strcmp(sentence, "quit")==0)||(strcmp(sentence, "q")==0)){
 		    quit_func();
 			break;
 		}
-		else if((strncmp(sentence, "history", 7)==0)||(strncmp(sentence, "hi", 2)==0)){
+		else if((strcmp(sentence, "history")==0)||(strcmp(sentence, "hi")==0)){
             push(sentence, index);  //add the command to history linked lsit
             history_func();
         }
-		else if(((strncmp(sentence, "dump", 4)==0)&&index==4)||(strncmp(sentence, "dump ", 5)==0)
-					||((strncmp(sentence, "du", 2)==0)&&index==2)||(strncmp(sentence, "du ", 3)==0)){
+		else if((strcmp(sentence, "dump")==0)||(strncmp(sentence, "dump ", 5)==0)
+					||(strcmp(sentence, "du")==0)||(strncmp(sentence, "du ", 3)==0)){
 	    	dump_slice_str(index);   //parsing the arguments
+			if(parameter_error==true){
+				printf("Wrong hexadecimal\n");
+				continue;
+			} 
 	    	if(start_appear==false && end_appear==false){	//when the command is 'dump'
 				if(startaddress+159>addrend){ 		//when the 160 memories from start address exceed the given virtual memory.
 		 			dump_func(startaddress, addrend);
@@ -72,6 +76,10 @@ int main(){
 		}
 		else if((strncmp(sentence, "edit ", 5)==0)||(strncmp(sentence, "e ", 2)==0)){
 	    	edit_slice_str(index);  //parsing arguments
+			if(parameter_error==true){
+				printf("Wrong hexadecimal\n");
+				continue;
+			}
 	    	if(start_appear*value_appear==0){		//check if the command is correct
 				printf("Pleas put two arguments or split arguments with comma.\n");
 	 			continue;
@@ -85,7 +93,11 @@ int main(){
 		}
         else if((strncmp(sentence, "fill ", 5)==0)||(strncmp(sentence, "f ", 2)==0)){
 	    	fill_slice_str(index);  //parsing arguments
-	    	if(start_appear*value_appear*end_appear==0){ 		//check if the command is correct
+	  		if(parameter_error==true){
+				printf("Wrong hexadecimal\n");
+				continue;
+			}
+		  	if(start_appear*value_appear*end_appear==0){ 		//check if the command is correct
 				printf("Please put three arguments or split arguments with comma.\n");
 				continue;
 	    	}	
@@ -96,15 +108,15 @@ int main(){
 	    	fill_func();
 	    	push(sentence, index);  //add the command to history linked list
 		}
-		else if(strncmp(sentence, "reset", 5)==0){
+		else if(strcmp(sentence, "reset")==0){
 	    	init_memory();
 	    	push(sentence, index);  //add the command to history linked list
 		}
-		else if(strncmp(sentence, "opcodelist", 10)==0){
+		else if(strcmp(sentence, "opcodelist")==0){
 	    	opcode_list_func();
 	    	push(sentence, index);  //add the command to history linked list
 		}
-		else if(strncmp(sentence, "opcode", 6)==0){
+		else if(strncmp(sentence, "opcode ", 7)==0){
 	    	char *command=NULL, copy[100];
 			strncpy(copy,sentence,strlen(sentence));	//copy the command for history
  	    	//extract mnemonic

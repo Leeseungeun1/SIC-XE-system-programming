@@ -30,4 +30,5 @@ boolean opcode_file_error;   //flag to check the existence of the file.
 boolean start_appear;	//flag to check the existence of start argument.	
 boolean end_appear;		//flag to check the existence of end argument.
 boolean value_appear;	//flag to check the existence of value argument.
+boolean parameter_error;  //flag to check the correctness of hexadecimal.
 int start, end, value;  //store the start, end, value as decimal number

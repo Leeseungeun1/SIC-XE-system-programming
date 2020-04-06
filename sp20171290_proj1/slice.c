@@ -21,7 +21,11 @@ void dump_slice_str(int index){
 		if(startstr[i]==' ') continue;
 		if(startstr[i]>='A'&&startstr[i]<='F') start=start+(startstr[i]-'A'+10)*sixteen;
 		else if (startstr[i]>='a'&&startstr[i]<='f') start=start+(startstr[i]-'a'+10)*sixteen;
-		else start=start+(startstr[i]-'0')*sixteen;
+		else if (startstr[i]>='0'&&startstr[i]<='9') start=start+(startstr[i]-'0')*sixteen;
+		else{	//if it is not hexadecimal
+			parameter_error=true;
+			break;
+		}
 		sixteen=sixteen*16;
       }
    }
@@ -34,7 +38,11 @@ void dump_slice_str(int index){
 		if(endstr[i]==' ') continue;
 		if(endstr[i]>='A'&&endstr[i]<='F') end=end+(endstr[i]-'A'+10)*sixteen; 
 		else if(endstr[i]>='a'&&startstr[i]<='f') end=end+(endstr[i]-'a'+10)*sixteen;
-		else end=end+(endstr[i]-'0')*sixteen;
+		else if(endstr[i]>='0'&&endstr[i]<='9') end=end+(endstr[i]-'0')*sixteen;
+		else{	//if it is not hexadecimal
+			parameter_error=true;
+			break;
+		}
 		sixteen=sixteen*16;
       }
    }
@@ -60,8 +68,12 @@ void edit_slice_str(int index){
 		if(startstr[i]==' ') continue;
         if(startstr[i]>='A'&&startstr[i]<='F') start=start+(startstr[i]-'A'+10)*sixteen;
 		else if(startstr[i]>='a'&&startstr[i]<='f') start=start+(startstr[i]-'a'+10)*sixteen;
-		else start=start+(startstr[i]-'0')*sixteen;
-        sixteen=sixteen*16;
+		else if(startstr[i]>='0'&&startstr[i]<='9') start=start+(startstr[i]-'0')*sixteen;
+       	else{	//if it is not hexadecimal
+			parameter_error=true;
+			break;
+		}
+		sixteen=sixteen*16;
       }
    }
    //extract values
@@ -73,7 +85,11 @@ void edit_slice_str(int index){
 		if(valuestr[i]==' ') continue;
 		if('A'<=valuestr[i]&&valuestr[i]<='F') value+=(10+valuestr[i]-'A')*sixteen;
 		else if('a'<=valuestr[i]&&valuestr[i]<='f') value=value+(10+valuestr[i]-'a')*sixteen;
-		else value+=(valuestr[i]-'0')*sixteen;
+		else if('0'<=valuestr[i]&&valuestr[i]<='9')  value+=(valuestr[i]-'0')*sixteen;
+		else{	//if it is not hexadecimal
+			parameter_error=true;
+			break;
+		}
 		sixteen=sixteen*16;
       }
    }
@@ -101,7 +117,11 @@ void fill_slice_str(int index){
 		if(startstr[i]==' ') continue;
         if(startstr[i]>='A'&&startstr[i]<='F') start=start+(startstr[i]-'A'+10)*sixteen;
 		else if(startstr[i]>='a'&&startstr[i]<='f') start=start+(startstr[i]-'a'+10)*sixteen;
-		else start=start+(startstr[i]-'0')*sixteen;
+		else if(startstr[i]>='0'&&startstr[i]<='9') start=start+(startstr[i]-'0')*sixteen;
+		else{	//if it is not hexadecimal
+			parameter_error=true;
+			break;
+		}
         sixteen=sixteen*16;
       }
    }
@@ -114,7 +134,11 @@ void fill_slice_str(int index){
 		if(endstr[i]==' ') continue;
 		if(endstr[i]>='A'&&endstr[i]<='F') end=end+(endstr[i]-'A'+10)*sixteen;
 		else if(endstr[i]>='a'&&endstr[i]<='f') end=end+(endstr[i]-'a'+10)*sixteen;
-		else end=end+(endstr[i]-'0')*sixteen;
+		else if(endstr[i]>='0'&&endstr[i]<='9') end=end+(endstr[i]-'0')*sixteen;
+		else{	//if it is not hexadecimal
+			parameter_error=true;
+			break;
+		}
         sixteen=sixteen*16;
       }
    }
@@ -127,7 +151,11 @@ void fill_slice_str(int index){
         if(valuestr[i]==' ') continue;
 		if('A'<=valuestr[i]&&valuestr[i]<='F') value+=(10+valuestr[i]-'A')*sixteen;
         else if('a'<=valuestr[i]&&valuestr[i]<='f') value=value+(10+valuestr[i]-'a')*sixteen;
-		else value+=(valuestr[i]-'0')*sixteen;
+		else if('0'<=valuestr[i]&&valuestr[i]<='9')  value+=(valuestr[i]-'0')*sixteen;
+		else{	//if it is not hexadecimal
+			parameter_error=true;
+			break;
+		}
         sixteen=sixteen*16;
       }
    }
