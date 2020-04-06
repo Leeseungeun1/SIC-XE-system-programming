@@ -116,7 +116,7 @@ int main(){
 	    	opcode_list_func();
 	    	push(sentence, index);  //add the command to history linked list
 		}
-		else if(strncmp(sentence, "opcode ", 7)==0){
+		else if((strncmp(sentence, "opcode ", 7)==0)&&index>7){
 	    	char *command=NULL, copy[100];
 			strncpy(copy,sentence,strlen(sentence));	//copy the command for history
  	    	//extract mnemonic
