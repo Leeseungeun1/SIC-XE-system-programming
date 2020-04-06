@@ -22,6 +22,7 @@ void build_hash_table(){
 		node->ptr=hash_table[index];
 		hash_table[index]=node;
    }
+   fclose(fp);
 }
 
 //add correct command into the history linked list
