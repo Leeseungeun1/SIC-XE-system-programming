@@ -15,7 +15,7 @@ void dump_slice_str(int index){
    //extract start address
    if(startstr!=NULL){
       start_appear=true;
-      size=strlen(startstr);
+	  size=strlen(startstr);
       sixteen=1;
       for(i=size-1;i>=0;i--){
 		if(startstr[i]==' ') continue;
@@ -32,7 +32,7 @@ void dump_slice_str(int index){
    //extract end address
    if(endstr!=NULL){
       end_appear=true;
-      size=strlen(endstr);
+	  size=strlen(endstr);
       sixteen=1;
       for(i=size-1;i>=0;i--){
 		if(endstr[i]==' ') continue;
