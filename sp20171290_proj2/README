@@ -1,0 +1,48 @@
+[Project]
+ Make a shell and memory space and opcode hash table
+
+[How to use this program]
+ 1. To compile, enter 'make' at the command line.
+    Then you will get an execution file, '20171290.out'
+ 2. To execute the program, enter './20171290.out' at the command line.
+	Then you can see 'sicsim>'. Now, you are ready to use the program.
+ 3. There are commands that this program can handle as follows
+    (1) 'help' or 'h'
+		With this command, you can check all the commands that this program can handle.
+    (2) 'dir' or 'd'
+		With this command, you can check all files in the current directory.
+		If the file is execution file, '*' is appended at the end of the file name.
+		If the file is directory file, '/' is appended at the end of the file name.
+	(3) 'quit' or 'q'
+		With this command, you can terminate the program.
+	(4) 'history' or 'hi'
+		With this command, you can check all the commands that you enetered.
+		If you entered undefined command, that command won't be shown.
+	(5) 'dump' or 'du'
+		With this command, you can check the memory space.
+		a. If you enter only 'dump' or 'du',
+		   160 memories will be shown with start 0.
+		   And if you enter only 'dump' or 'du' again, next 160 memories will be shown.
+		b. If you enter 'dump startadr' or 'du startadr'
+		   160 memories will be shown with start startadr.
+		c. If you enter 'dump startadr endadr' or 'du startadr endadr',
+		   memories from startadr to endadr will be shown.
+	(6) 'edit address, newvalue' or 'e address, newvalue'
+		With this command, you can change the value in address as newvalue.
+	(7) 'fill start, end, newvalue' or 'f start, end, newvalue'
+		With this command, you can change the values from address start to address end as newvalue.
+	(8) 'reset'
+		With this command, you can reset all memories as the value 0.
+	(9) 'opcode mnemonic'
+		With this command, you can check the opcode of the mnemonic.
+	(10) 'opcodelist'
+		With this command, you can check the whole opcode of the mnemonic with the form of hash table.
+
+[How to remove the program]
+ Enter 'make clean' at the command line.
+
+[Caution of the program]
+ 1.All commands should be lower case.
+   except: address and value (can be both lower and upper case), mnemonic(should be upper case)
+ 2. All address and values are hexadecimal.
+ 3. Commands are limited to 100 letters.
