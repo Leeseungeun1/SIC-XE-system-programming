@@ -7,4 +7,6 @@ void dump_func();
 void edit_func();
 void fill_func();
 void opcode_list_func();
-int opcode_func(char* command);
+op_node* opcode_func(char* command);
+int type_filename_func(char* filename);
+void symbol_func();

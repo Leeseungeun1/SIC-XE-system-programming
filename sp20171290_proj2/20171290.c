@@ -3,6 +3,8 @@
 #include <string.h>
 #include <dirent.h>
 #include <sys/stat.h>
+#include "20171290.h"
+#include "pass1.h"
 #include "command.h"
 #include "slice.h"
 #include "subfunc.h"
@@ -17,7 +19,8 @@ int main(){
     while(1){				//keep showing the command prompt until the user quits the program.
 		start_appear=false; end_appear=false; value_appear=false; parameter_error=false;
     	start=0; end=0; value=0;
-		printf("sicsim>");
+		assemble_error=0;
+		printf("sicsim> ");
     	char c;
 		int index=0;
     	while((c=getchar())!='\n'){
@@ -122,9 +125,44 @@ int main(){
  	    	//extract mnemonic
 			strtok(sentence," ");
 	    	command=strtok(NULL, " ");
-	   	 	int ret=opcode_func(command);
-            if(ret==0) push(copy, index);  //add the command to history linked list
-										   //if there was opcode of the given mnemonic
+	   	 	op_node* ret=opcode_func(command);
+            if(ret==NULL) printf("There is no opcode for the command\n");
+			else{
+				printf("opcode is %s\n", ret->hexa);
+				push(copy, index);
+			}
+		}
+		else if((strncmp(sentence, "type ", 5)==0)&&index>5){
+			char *command=NULL, copy[100];
+			strncpy(copy, sentence, strlen(sentence));
+			//extract filename
+			strtok(sentence, " ");
+			command=strtok(NULL, " ");
+			int ret=type_filename_func(command);
+			if(ret==-1) printf("Wrong file. Check the file\n"); // no file in current dir
+			else push(copy, index);
+		}
+		else if((strncmp(sentence, "assemble ",9)==0)&&index>9){
+			char *command=NULL, copy[100];
+			strncpy(copy, sentence, strlen(sentence));
+			//extract filename
+			strtok(sentence, " ");
+			command=strtok(NULL, " ");
+			int ret=pass_one(command);	
+			if(ret==-1) printf("Check the file\n");
+			if(assemble_error!=0){
+				if(assemble_error==1) printf("line %d: undefined variable\n",ret);
+				if(assemble_error==2) printf("line %d: same variable names\n",ret);
+				if(assemble_error==3) printf("line %d: undefined instruction\n",ret);
+			}
+			else{
+				printf("Successfully assemble %s.\n", command);
+				push(copy, index);
+			}
+		}
+		else if(strcmp(sentence, "symbol")==0){
+			symbol_func();
+			push(sentence, index);
 		}
 		else printf("Command not found\n"); //wrong command	
     }

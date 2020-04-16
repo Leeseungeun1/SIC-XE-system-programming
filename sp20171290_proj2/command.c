@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <dirent.h>
 #include <sys/stat.h>
+#include "20171290.h"
 #include "slice.h"
 #include "command.h"
 #include "subfunc.h"
@@ -212,20 +213,36 @@ void opcode_list_func(){
 
 //function called when the command is 'opcode'
 //find out the opcode of the given assembly language
-int opcode_func(char* command){
+op_node* opcode_func(char* command){
    	int index=(command[0]-'A')%20;
-   	int ret=-1;
   	op_node* walk=hash_table[index];
    	while(walk!=NULL){
 		if(strcmp(walk->command,command)==0 && strlen(command)==strlen(walk->command)){
-	  		printf("opcode is %s\n", walk->hexa);
-	  		ret=0;
 	  		break;
        	}
        	walk=walk->ptr;
    	}
-   	if(walk==NULL) printf("There is no opcode for the command\n"); 
-	//print error if there is no opcode matched with the assembly language.
-   	return ret;
+   	return walk;
 }
 
+int type_filename_func(char* filename){
+	FILE *fp=fopen(filename, "r");
+	if(fp==NULL) return -1;	
+	char c;
+	//print the text of the file
+	while((c=fgetc(fp))!=EOF){
+		printf("%c",c);
+	}
+	return 0;
+}
+
+void symbol_func(){
+	if(symbol_list==NULL) printf("Empty Symbols\n");
+	else{
+		symb_node* walk=symbol_list;
+		while(walk!=NULL){
+			printf("\t %-30s %04X\n", walk->symbol, walk->addr);
+			walk=walk->ptr;
+		}
+	}
+}
