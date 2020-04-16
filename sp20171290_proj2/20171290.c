@@ -4,10 +4,11 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include "20171290.h"
-#include "pass1.h"
+#include "assemble.h"
 #include "command.h"
 #include "slice.h"
 #include "subfunc.h"
+#include "write.h"
 #define addrend 1048575   //end of the virtual memory address
 
 //the main function
@@ -149,16 +150,30 @@ int main(){
 			strtok(sentence, " ");
 			command=strtok(NULL, " ");
 			int ret=pass_one(command);	
-			if(ret==-1) printf("Check the file\n");
 			if(assemble_error!=0){
 				if(assemble_error==1) printf("line %d: undefined variable\n",ret);
 				if(assemble_error==2) printf("line %d: same variable names\n",ret);
 				if(assemble_error==3) printf("line %d: undefined instruction\n",ret);
+				continue;
 			}
-			else{
-				printf("Successfully assemble %s.\n", command);
-				push(copy, index);
+			ret=pass_two();
+			if(assemble_error!=0){
+				if(assemble_error==1) printf("line %d: undefined variable\n",ret);
+				if(assemble_error==2) printf("line %d: same variable names\n",ret);
+				if(assemble_error==3) printf("line %d: undefined instruction\n",ret);
+				continue;
 			}
+			if(ret==-1) {
+				printf("Check the file\n");
+				continue;
+			}
+			ret=write_lst(command);
+			if(ret==-1) continue;
+			//ret=write_obj();	
+			if(ret==-1) continue;
+			printf("Successfully assemble %s.\n", command);
+			push(copy, index);
+			
 		}
 		else if(strcmp(sentence, "symbol")==0){
 			symbol_func();

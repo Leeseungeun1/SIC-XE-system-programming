@@ -216,7 +216,7 @@ void opcode_list_func(){
 op_node* opcode_func(char* command){
    	int index=(command[0]-'A')%20;
   	op_node* walk=hash_table[index];
-   	while(walk!=NULL){
+	while(walk!=NULL){
 		if(strcmp(walk->command,command)==0 && strlen(command)==strlen(walk->command)){
 	  		break;
        	}

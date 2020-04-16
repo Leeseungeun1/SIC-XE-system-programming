@@ -62,6 +62,10 @@ void init_global_variable(){
 	symbol_list=NULL;
 	list_head=NULL;
 	list_tail=NULL;
+	program_length=0;
+	mod_head=NULL;
+	mod_tail=NULL;
+	base_reg=0;
 }
 
 //To get recent assemble file symbol, free the symbol list made before.

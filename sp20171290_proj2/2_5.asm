@@ -1,7 +1,7 @@
 COPY   START  0
 FIRST  STL    RETADR
        LDB    #LENGTH
-       BASE   LENGTH
+       BASE   LENGTH 
 CLOOP  +JSUB  RDREC
        LDA    LENGTH
        COMP   #0
