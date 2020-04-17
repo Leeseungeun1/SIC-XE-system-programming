@@ -66,6 +66,8 @@ int pass_one(char* filename){
 		new->line=line; new->ptr=NULL;
 		new->obj_flag=true;
 		index=0; number=0;
+		for(i=0;i<5;i++) (new->assembly[i])[0]='\0';
+		new->objcode[0]='\0'; new->inst[0]='\0'; 
 		if(temp[0]=='.'){	
 			strcpy(new->assembly[0], ".");
 			new->argnum=1;

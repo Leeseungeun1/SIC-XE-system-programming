@@ -180,7 +180,7 @@ int main(){
 			strcpy(filename, command);
 			ret=write_lst(filename);
 			ret=write_obj(filename);	
-			if(ret==-1) {printf("No assemblecode. Chekc the file\n");continue;}
+			if(ret==-1) {printf("No assemblecode. Check the file\n");continue;}
 			printf("Successfully assemble %s.\n", command);
 			push(copy, index);
 			
