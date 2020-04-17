@@ -43,10 +43,10 @@ int write_obj(char* filename){
 	while(start!=NULL){
 		fprintf(fp,"T");
 		walk=start;
-		while(walk!=NULL&&((walk->loc)-(start->loc))<27&&(strncmp(walk->assembly[1],"RES",3)!=0)){
+		while(walk!=NULL&&((walk->loc)-(start->loc))<28&&(strncmp(walk->assembly[1],"RES",3)!=0)){
 			walk=walk->ptr;
 		}
-		if(walk==NULL) fprintf(fp, "%06X%02X", start->loc, (program_length-start->loc));
+		if(walk==NULL) fprintf(fp, "%06X%02X", start->loc, ((program_length+(list_head->ptr)->loc)-start->loc));
 		else fprintf(fp,"%06X%02X",start->loc,(walk->loc)-(start->loc));
 		while(walk!=NULL&&(strcmp(walk->assembly[0], ".")==0||strncmp(walk->assembly[1], "RES",3)==0)) walk=walk->ptr;
 		while(start!=walk){
