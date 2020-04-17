@@ -31,7 +31,7 @@ typedef struct list_node{
 	char inst[30];
 	char assembly[5][30];  //0: label 1: instruction 2: operand else: extra buffer
 	boolean obj_flag;
-	char objcode[15];
+	char objcode[10];
 	struct list_node *ptr;
 }list_node;
 
@@ -64,8 +64,7 @@ list_node *list_head;
 list_node *list_tail;
 mod_node *mod_head;
 mod_node *mod_tail;
-char assemble_line[100][30];  //buffer to store the assemble instruction
-char program_title[30];
+char program_title[6];
 int assemble_error; //1: undefined variable 2: same variable name 3: undefined instruction
 int program_length;
 int base_reg;

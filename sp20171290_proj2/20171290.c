@@ -144,7 +144,7 @@ int main(){
 			else push(copy, index);
 		}
 		else if((strncmp(sentence, "assemble ",9)==0)&&index>9){
-			char *command=NULL, copy[100];
+			char *command=NULL, copy[100], filename[20];
 			strncpy(copy, sentence, strlen(sentence));
 			//extract filename
 			strtok(sentence, " ");
@@ -167,10 +167,10 @@ int main(){
 				printf("Check the file\n");
 				continue;
 			}
-			ret=write_lst(command);
-			if(ret==-1) continue;
-			//ret=write_obj();	
-			if(ret==-1) continue;
+			strcpy(filename, command);
+			ret=write_lst(filename);
+			ret=write_obj(filename);	
+			if(ret==-1) {printf("No assemblecode. Chekc the file\n");continue;}
 			printf("Successfully assemble %s.\n", command);
 			push(copy, index);
 			

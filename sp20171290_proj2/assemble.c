@@ -45,6 +45,7 @@ void push_modification(list_node* list){
 	mod_node* new=(mod_node*)malloc(sizeof(mod_node));
 	new->address=list->loc+1;
 	new->num=5;
+	new->ptr=NULL;
 	if(mod_head==NULL) mod_head=new;
 	if(mod_tail!=NULL) mod_tail->ptr=new;
 	mod_tail=new;
@@ -207,7 +208,6 @@ int pass_two(){
 			}
 			walk->obj_flag=false;
 			walk=walk->ptr;
-			printf("base: %d\n", base_reg);
 			continue;
 		}
 		//search OPTAB for OPCODE
@@ -282,7 +282,6 @@ int pass_two(){
 					if(n==1&&i==1) f=find_symbol(walk->assembly[2]);
 					else f=find_symbol(walk->assembly[2]+1);
 					if(f==NULL){
-						printf("%s\n", walk->assembly[2]);
 						ret=walk->line;
 						assemble_error=1;
 						break;
@@ -371,7 +370,6 @@ int pass_two(){
 					int diff=(sfound->addr)-(walk->ptr)->loc;
 					if(diff<0) diff=diff+4096;
 					i=5;
-					printf("!%d!", diff);
 					while(diff!=0){
 						int rest=diff%16;
 						diff=diff/16;
@@ -438,20 +436,6 @@ int pass_two(){
 				break;
 			}
 		}
-		walk=walk->ptr;
-	}
-	
-	//DB
-	walk=list_head;
-	while(walk!=NULL){
-		printf("%d ", walk->line);
-		for(i=0;i<(walk->argnum);i++){
-			printf("%s ", walk->assembly[i]);
-		}
-		if(walk->obj_flag==true){
-			printf("%s", walk->objcode);
-		}
-		printf("\n");
 		walk=walk->ptr;
 	}
 	return ret;

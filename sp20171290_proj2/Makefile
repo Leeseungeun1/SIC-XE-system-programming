@@ -15,4 +15,4 @@ write.o: 20171290.h write.h write.c
 	gcc -c -Wall 20171290.c 
 
 clean:
-	rm *.o *.out
+	rm *.o *.out *.lst *.obj
