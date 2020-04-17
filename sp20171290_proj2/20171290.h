@@ -28,7 +28,7 @@ typedef struct list_node{
 	int argnum;
 	int line;
 	int loc;
-	char inst[30];
+	char inst[50];
 	char assembly[5][30];  //0: label 1: instruction 2: operand else: extra buffer
 	boolean obj_flag;
 	char objcode[10];

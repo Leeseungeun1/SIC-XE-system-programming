@@ -1,6 +1,6 @@
 COPY   START  0
 FIRST  STL    RETADR
-       LDB    #LENGTH
+       LDB    #LENGTH 
        BASE   LENGTH 
 CLOOP  +JSUB  RDREC
        LDA    LENGTH
@@ -15,7 +15,7 @@ ENDFIL LDA    EOF
        +JSUB  WRREC
        J      @RETADR
 EOF    BYTE   C'EOF'
-RETADR RESW   1
+RETADR RESW   1 
 LENGTH RESW   1
 BUFFER RESB   4096
 .

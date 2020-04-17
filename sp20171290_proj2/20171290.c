@@ -144,12 +144,22 @@ int main(){
 			else push(copy, index);
 		}
 		else if((strncmp(sentence, "assemble ",9)==0)&&index>9){
+			while(list_head!=NULL){
+				list_node* temp=list_head;
+				list_head=list_head->ptr;
+				free(temp);
+			}
+			while(mod_head!=NULL){
+				mod_node* temp=mod_head;
+				mod_head=mod_head->ptr;
+				free(temp);
+			}
 			char *command=NULL, copy[100], filename[20];
 			strncpy(copy, sentence, strlen(sentence));
 			//extract filename
 			strtok(sentence, " ");
 			command=strtok(NULL, " ");
-			int ret=pass_one(command);	
+			int ret=pass_one(command);
 			if(assemble_error!=0){
 				if(assemble_error==1) printf("line %d: undefined variable\n",ret);
 				if(assemble_error==2) printf("line %d: same variable names\n",ret);

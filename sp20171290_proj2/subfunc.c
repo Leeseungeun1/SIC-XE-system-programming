@@ -70,10 +70,9 @@ void init_global_variable(){
 
 //To get recent assemble file symbol, free the symbol list made before.
 void free_symbol(){
-	symb_node *walk=symbol_list;
-	while(walk!=NULL){
-		symb_node *temp=walk;
-		walk=walk->ptr;
+	while(symbol_list!=NULL){
+		symb_node *temp=symbol_list;
+		symbol_list=symbol_list->ptr;
 		free(temp);
 	}
 }

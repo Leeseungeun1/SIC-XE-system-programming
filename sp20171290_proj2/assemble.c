@@ -71,15 +71,15 @@ int pass_one(char* filename){
 			new->argnum=1;
 		}
 		else{
-			strcpy(new->inst, temp);
+			strcpy(new->inst, temp); 
 			for(i=0;i<size;i++){
 				if(i==0&&temp[0]==' '){
 					strcpy(new->assembly[0], "-"); number++;
 				}
-				else if(temp[i]==' '&&index!=0){
+				else if((temp[i]==' '||temp[i]==',')&&index!=0){
 					new->assembly[number++][index]='\0'; index=0;
 				}
-				else if(temp[i]!=' '){
+				else if(temp[i]!=' '&&temp[i]!=','){
 					new->assembly[number][index++]=temp[i];
 				}
 			}
@@ -110,7 +110,7 @@ int pass_one(char* filename){
 					else{
 						push_symbol(new->assembly[0], address);
 					}
-			}
+				}
 				op_node* found;
 				if(new->assembly[1][0]=='+'){			
 					found=opcode_func(new->assembly[1]+1);
@@ -245,6 +245,29 @@ int pass_two(){
 				boolean character=false;
 				if((walk->assembly[1])[0]=='+') e=1;
 				
+				//if there is at most one instruction
+				if(walk->argnum<2){
+					op_node* found=NULL;
+					if((walk->assembly[1])[0]=='+') found=opcode_func(walk->assembly[1]+1);
+					else opcode_func(walk->assembly[1]);
+					if(found==NULL){
+						assemble_error=3;
+						ret=walk->line;
+						break;
+					}
+					walk->objcode[0]=found->hexa[0];
+
+                 	int opni;
+                 	if('0'<=found->hexa[1]&&found->hexa[1]<='9') opni=found->hexa[1]-'0';
+                 	else opni=found->hexa[1]-'A'+10;
+                 	opni+=n*2+i*1;
+                 	if(0<=opni&&opni<=9) walk->objcode[1]=opni+'0';
+                 	else walk->objcode[1]=opni-10+'A';
+
+					for(i=3;i<8;i++) walk->objcode[i]='0';
+					break;
+				}
+	
 				//find appropriate n, i;
 				if((walk->assembly[2])[0]=='#'){ n=0; sindex++;}
 				else if((walk->assembly[2])[0]=='@') {i=0; sindex++;}
@@ -264,9 +287,6 @@ int pass_two(){
 				//if not error (undefined symbol)
 				symb_node* sfound=NULL;
 				if(character){
-					//cut out the comma
-					if((walk->assembly[2])[strlen(walk->assembly[2])-1]==',') (walk->assembly[2])[strlen(walk->assembly[2])-1]='\0';
-					
 					if((walk->assembly[2])[0]=='#'||(walk->assembly[2])[0]=='@') sfound=find_symbol(walk->assembly[2]+1);
 					else sfound=find_symbol(walk->assembly[2]);
 					if(sfound==NULL) {
@@ -319,19 +339,21 @@ int pass_two(){
 					}
 					else{
 						for(i=3;i<8;i++) walk->objcode[i]='0';
-						int end=0, value=0, ten=1, j;
-						if((walk->assembly[2])[0]=='#') end=1;
-						for(j=strlen(walk->assembly[2])-1;j>=end;j--){
-							value=value+((walk->assembly[2])[j]-'0')*ten;
-							ten=ten*10;
+							if(walk->argnum>1){
+							int end=0, value=0, ten=1, j;
+							if((walk->assembly[2])[0]=='#') end=1;
+							for(j=strlen(walk->assembly[2])-1;j>=end;j--){
+								value=value+((walk->assembly[2])[j]-'0')*ten;
+								ten=ten*10;
+							}
+							i=7;
+						 	while(value!=0){
+                            	 int rest=value%16;
+                             	value=value/16;
+                             	if(0<=rest&&rest<=9) walk->objcode[i--]=rest+'0';
+                             	else walk->objcode[i--]=rest-10+'A';
+                         	}
 						}
-						i=7;
-						 while(value!=0){
-                             int rest=value%16;
-                             value=value/16;
-                             if(0<=rest&&rest<=9) walk->objcode[i--]=rest+'0';
-                             else walk->objcode[i--]=rest-10+'A';
-                         }
 					}
 					walk->objcode[8]='\0';
 				}
@@ -394,7 +416,8 @@ int pass_two(){
 					num++;
 					temp=temp/16;
 				}
-				num--;
+				if(num!=0) num--;
+				walk->objcode[num]='0';
 				while(value!=0){
 					int rest=value%16;
 					value=value/16;
@@ -431,7 +454,6 @@ int pass_two(){
 			//else there is no matched opcode.
 			else {
 				ret=walk->line;
-				printf("here?\n");
 				assemble_error=3;
 				break;
 			}
