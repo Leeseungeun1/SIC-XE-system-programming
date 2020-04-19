@@ -60,11 +60,11 @@ boolean parameter_error;  //flag to check the correctness of hexadecimal.
 int start, end, value;  //store the start, end, value as decimal number
 
 symb_node *symbol_list;  //head pointer of symbol table list
-list_node *list_head;
-list_node *list_tail;
-mod_node *mod_head;
-mod_node *mod_tail;
-char program_title[6];
+list_node *list_head;	//head pointer of list for lst file
+list_node *list_tail;	//tail pointer of list for lst file
+mod_node *mod_head;		//head pointer of list for modification code
+mod_node *mod_tail;		//tail pointer of list for modification code
+char program_title[6];	//store the program title for obj code
 int assemble_error; //1: undefined variable 2: same variable name 3: undefined instruction
-int program_length;
-int base_reg;
+int program_length;		//store the program length for obj code
+int base_reg;		//store the value of base register if base register is used for addressing

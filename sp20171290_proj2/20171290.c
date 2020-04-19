@@ -135,15 +135,16 @@ int main(){
 		}
 		else if((strncmp(sentence, "type ", 5)==0)&&index>5){
 			char *command=NULL, copy[100];
-			strncpy(copy, sentence, strlen(sentence));
+			strncpy(copy, sentence, strlen(sentence));  //copy the command for history
 			//extract filename
 			strtok(sentence, " ");
 			command=strtok(NULL, " ");
 			int ret=type_filename_func(command);
 			if(ret==-1) printf("Wrong file. Check the file\n"); // no file in current dir
-			else push(copy, index);
+			else push(copy, index);  //if the command exeucted successfully, push in history linked list.
 		}
 		else if((strncmp(sentence, "assemble ",9)==0)&&index>9){
+			//if memory of list for object code and list for modification code is not free them
 			while(list_head!=NULL){
 				list_node* temp=list_head;
 				list_head=list_head->ptr;
@@ -155,38 +156,38 @@ int main(){
 				free(temp);
 			}
 			char *command=NULL, copy[100], filename[20];
-			strncpy(copy, sentence, strlen(sentence));
+			strncpy(copy, sentence, strlen(sentence));	//copty the command for history
 			//extract filename
 			strtok(sentence, " ");
 			command=strtok(NULL, " ");
-			int ret=pass_one(command);
-			if(assemble_error!=0){
+			int ret=pass_one(command);	//create lst list for lst file
+			if(assemble_error!=0){	//if there is error while creating lst file
 				if(assemble_error==1) printf("line %d: undefined variable\n",ret);
 				if(assemble_error==2) printf("line %d: same variable names\n",ret);
 				if(assemble_error==3) printf("line %d: undefined instruction\n",ret);
 				continue;
 			}
-			ret=pass_two();
-			if(assemble_error!=0){
+			ret=pass_two();	//create obj list for obj file
+			if(assemble_error!=0){	//if there is error while creating obj file
 				if(assemble_error==1) printf("line %d: undefined variable\n",ret);
 				if(assemble_error==2) printf("line %d: same variable names\n",ret);
 				if(assemble_error==3) printf("line %d: undefined instruction\n",ret);
 				continue;
 			}
-			if(ret==-1) {
+			if(ret==-1) {		//if the file name is wrong
 				printf("Check the file\n");
 				continue;
 			}
-			strcpy(filename, command);
-			ret=write_lst(filename);
-			ret=write_obj(filename);	
-			if(ret==-1) {printf("No assemblecode. Check the file\n");continue;}
+			strcpy(filename, command);		//copy the command for standard output command.
+			ret=write_lst(filename);		//write lst file using lst list 
+			ret=write_obj(filename);		//write obj file using obj list
+			if(ret==-1) {printf("No assemblecode. Check the file\n");continue;}	//if there are no assembled code
 			printf("Successfully assemble %s.\n", command);
 			push(copy, index);
 			
 		}
 		else if(strcmp(sentence, "symbol")==0){
-			symbol_func();
+			symbol_func();		//show the symbol of the assemble file.
 			push(sentence, index);
 		}
 		else printf("Command not found\n"); //wrong command	

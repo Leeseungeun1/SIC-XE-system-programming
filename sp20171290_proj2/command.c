@@ -225,6 +225,8 @@ op_node* opcode_func(char* command){
    	return walk;
 }
 
+//function called when the command is started with 'type'
+//print out the text of the given filename
 int type_filename_func(char* filename){
 	FILE *fp=fopen(filename, "r");
 	if(fp==NULL) return -1;	
@@ -236,6 +238,8 @@ int type_filename_func(char* filename){
 	return 0;
 }
 
+//function called when the command is started with 'symbol'
+//print out the symbols of the assembly code in ascending order.
 void symbol_func(){
 	if(symbol_list==NULL) printf("Empty Symbols\n");
 	else{
