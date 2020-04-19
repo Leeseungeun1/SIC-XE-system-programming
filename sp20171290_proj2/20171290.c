@@ -156,7 +156,7 @@ int main(){
 				free(temp);
 			}
 			char *command=NULL, copy[100], filename[20];
-			strncpy(copy, sentence, strlen(sentence));	//copty the command for history
+			strncpy(copy, sentence, strlen(sentence));	//copy the command for history
 			//extract filename
 			strtok(sentence, " ");
 			command=strtok(NULL, " ");
