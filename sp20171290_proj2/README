@@ -9,7 +9,7 @@
 	Then you can see 'sicsim>'. Now, you are ready to use the program.
  3. To get an object file 
     (1) Store an asm file in the same directory with the execution file.
-	(2) Enter the command 'type assemble_file_name.asm'.
+	(2) Enter the command 'assemble assemble_file_name.asm'.
 		If the command 'Successfully assemble assemble_file_name.asm' is shown,
 		the lst file and obj file are successfully created.
 		If not, check the error message shown in the command.
