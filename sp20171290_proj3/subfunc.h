@@ -1,0 +1,17 @@
+void build_hash_table();
+void push(char* str, int index);
+boolean subcmp(int start, int end, char* str1, char* str2);
+void init_global_variable();
+void free_symbol();
+estab* find_progname(char* name);
+estab* find_progsymb(char* name);
+refer* find_refer(char* number);
+void free_estab();
+void free_bp();
+bpoint* find_bpoint(int numbr);
+void print_bp();
+void print_registers(boolean end, int bp);
+op_node* find_opinst(char* hexa);
+void set_register(int reg, int value);
+int get_register(int reg);
+void init_reg();

@@ -1,0 +1,27 @@
+[Project]
+ Make a SIC/XE machine program that creates a list file and an object file
+ from the assembly code 
+
+[How to use this program]
+ 1. To compile, enter 'make' at the command line.
+    Then you will get an execution file, '20171290.out'
+ 2. To execute the program, enter './20171290.out' at the command line.
+	Then you can see 'sicsim>'. Now, you are ready to use the program.
+ 3. To get an object file 
+    (1) Store an asm file in the same directory with the execution file.
+	(2) Enter the command 'assemble assemble_file_name.asm'.
+		If the command 'Successfully assemble assemble_file_name.asm' is shown,
+		the lst file and obj file are successfully created.
+		If not, check the error message shown in the command.
+	(3) You can check the text of the lst or obj file by using type command.
+		ex) type assemble_file_name.lst  
+
+[How to remove the program]
+ Enter 'make clean' at the command line. Be careful that all lst files and obj files are
+ removed, too.
+
+[When assembling the given file is failed?]
+ 1. If you try to assemble the file which extension is not '.asm'.
+ 2. If there are undefined variables in the asm file.
+ 3. If the variable name is used several times.
+ 4. If there are undefined instructions in the asm file.

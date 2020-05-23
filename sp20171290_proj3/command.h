@@ -1,0 +1,16 @@
+void init_memory();
+void help_func();
+void dir_func();
+void quit_func();
+void history_func();
+void dump_func();
+void edit_func();
+void fill_func();
+void opcode_list_func();
+op_node* opcode_func(char* command);
+int type_filename_func(char* filename);
+void symbol_func();
+int progaddr_func(int index);
+int loader_func(int index);
+void bp_func();
+int run_func();
