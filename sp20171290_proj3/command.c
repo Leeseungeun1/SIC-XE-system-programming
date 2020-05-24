@@ -163,8 +163,8 @@ void dump_func(int startidx, int endidx){
 		//print the character of the memory
         for(i=0;i<16;i++){
 			//print '.' if there are no ascii codes matched with the value or out of range of required memory part.
-			if(mem[address][i]<20||mem[address][i]>126||(address==startx&&i<starty)||(address==endx&&i>endy)) printf(".");
-            else printf("%c",mem[address][i]);
+			if(mem[address][i]<32||mem[address][i]>126||(address==startx&&i<starty)||(address==endx&&i>endy)) printf(".");
+            else printf("%c", mem[address][i]);
         }
         printf("\n");
         address++;
@@ -252,6 +252,7 @@ void symbol_func(){
 	}
 }
 
+//set the program address
 int progaddr_func(int index){
 	char str[100];
 	char *address=NULL;
@@ -266,18 +267,22 @@ int progaddr_func(int index){
 	size = strlen(address);
 	int before_addr = progaddr;
 	progaddr=0;
+
+	//get the integer value from the hexadecimal address
 	for(i=size-1;i>=0;i--){
 		if(address[i]==' ') continue;
 		if('A'<=address[i]&&address[i]<='F') progaddr = progaddr+(address[i]-'A'+10)*sixteen;
 		else if('a'<=address[i]&&address[i]<='f') progaddr = progaddr+(address[i]-'a'+10)*sixteen;
 		else if('0'<=address[i]&&address[i]<='9') progaddr = progaddr+(address[i]-'0')*sixteen;
 		else{
+			//restore the program address if input address is not valid
 			parameter_error=true;
 			progaddr = before_addr;
 			break;
 		}
 		sixteen = sixteen*16;
 	}
+	//error if the address is out of memory
 	if(progaddr>addrend) {
 		progaddr = before_addr;
 		return -1;
@@ -285,6 +290,7 @@ int progaddr_func(int index){
 	return 0;
 }
 
+//load file to the memory
 int loader_func(int index){
 	char str[100]="\0";
 	char *file[3];
@@ -292,6 +298,8 @@ int loader_func(int index){
 	strncpy(str, sentence, index);
 	strtok(str," ");
 	str[index]='\0';
+
+	//parse the filename
 	for(i=0;i<3;i++){
 		file[i]=NULL;
 		file[i]=strtok(NULL, " ");
@@ -301,30 +309,35 @@ int loader_func(int index){
 	int res;	
 	for(i=0;i<3;i++){
 		if(file[i]==NULL) break;
+		//get the symbol and program name info
 		res = loader_pass1(file[i]);
 		if(res!=0) return res;
 	}	
 
+	//check whether the program can be loaded or not
 	res = check_bound();
 	if(res!=0) return res;
 
 	for(i=0;i<3;i++){
 		if(file[i]==NULL) break;
+		//load object code to memory and do modification
 		res = loader_pass2(file[i]);
 		if(res!=0) return res;
 	}
 
+	//print load map if the load succeed.
 	print_estab();
-	
 	return 0;			
 }
 
+//store the break points
 void bp_func(){
 	int i, size, sixteen;
 	
 	size = strlen(sentence);
 	sixteen = 1;
 	int bp=0;
+	//translate the hexadecimal LOC value into the integer value
 	for(i=size-1;i>=3;i--){
 		if(sentence[i]==' ') continue;
 		if('A'<=sentence[i]&&sentence[i]<='F') bp = bp+(sentence[i]-'A'+10)*sixteen;
@@ -339,6 +352,7 @@ void bp_func(){
 
 	if(parameter_error==true) return ;
 	
+	//Do not insert the bp if there is already same bp.
 	if(find_bpoint(bp)!=NULL){
 		printf("The breakpoint is already set\n");
 		return;
@@ -358,21 +372,17 @@ void bp_func(){
 	printf("\t [ok] create breakpoint %X\n", bp);	
 }
 
+//run the program before the break points.
 int run_func(){
 	int i, dec;
 	boolean endflag=false;
 	while(PC<progaddr+totalLength){
-		// if PC==bp
-			bpoint* findbp = find_bpoint(PC);
-			if(findbp!=NULL){
-				print_registers(false, PC);
-				endflag=true;
-			}
+		loc = PC;
 		//1. instruction parsing
 		char inst[3];
 		int x=loc/16;
 		int y=loc%16;
-		dec=(mem[x][y]/16);
+		dec=(mem[x][y]/16);		//bring the object code from the memory.
 		if(dec>=10) inst[0]=(dec-10+'A');
 		else inst[0]=dec+'0';
 		
@@ -380,16 +390,21 @@ int run_func(){
 		if(dec>=10) inst[1]=(dec-10+'A');
 		else inst[1]=dec+'0';
 		inst[2]='\0';
-	
+
 		op_node* opcode = find_opinst(inst);
 		if(opcode==NULL) return -1;		
-		
+	
 		// handle for format 1
 		if(strcmp(opcode->format, "1")==0){
 			PC=loc+1;
-			loc=PC;
-			if(endflag==true) break;
-			else continue;
+			//if PC==bp, print the register informations
+        	bpoint* findbp = find_bpoint(PC);
+          	if(findbp!=NULL){
+            	print_registers(false, PC);
+            	endflag=true;
+           		break;
+			}
+			continue;
 		}
 		//2. handle for format 2
 		if(strcmp(opcode->format,"2")==0){
@@ -398,8 +413,7 @@ int run_func(){
 			int reg1=mem[x][y]/16;
 			int reg2=mem[x][y]%16;
 			PC=loc+2;
-			loc=PC;
-			
+	
 			//ADDR
 			if(strcmp(opcode->command, "ADDR")==0){
 				int value=get_register(reg2)+get_register(reg1);
@@ -411,6 +425,7 @@ int run_func(){
 			}
 			//COMPR
 			if(strcmp(opcode->command, "COMPR")==0){
+				//nothing to do
 			}
 			//DIVR
 			if(strcmp(opcode->command, "DIVR")==0){
@@ -437,9 +452,16 @@ int run_func(){
 				else if(reg2Val==reg1Val) compare = 0;
 				else if (reg2Val<reg1Val) compare=-1;
 			}
-			if(endflag==true) break;
-			else continue;
+			//if PC==bp, print the register information
+			bpoint* findbp = find_bpoint(PC);
+           		if(findbp!=NULL){
+               	print_registers(false, PC);
+               	endflag=true;
+          		break;
+			}
+			continue;
 		}
+		
 		//find nixbpe
 		int nb, ib, xb, bb, pb, eb;
 		ib = mem[x][y]%2;
@@ -457,6 +479,7 @@ int run_func(){
 		if(eb==1){
 			mul=1;
 			if(nb==1&&ib==1){
+				//get the address of the memory
 				for(i=3;i>0;i--){
 					x=(loc+i)/16;
 					y=(loc+i)%16;
@@ -466,6 +489,7 @@ int run_func(){
 				}
 			}
 			if(nb==0&&ib==1){
+				//get the immediate value
 				for(i=3;i>0;i--){
 					x=(loc+i)/16;
 					y=(loc+i)%16;
@@ -473,34 +497,49 @@ int run_func(){
 					else data+=mem[x][y]*mul;
 					mul=mul*256;
 				}
-			}
+			}	
 			PC=loc+4;
-			loc=PC;
 		}
 		//4. handle for format 3
 		else{
 			PC=loc+3;
 			//TD
 			if(strcmp(opcode->command, "TD")==0){
-				loc=PC;
 				compare = -1;
-				if(endflag==true) break;
-				else continue;
+			  	bpoint* findbp = find_bpoint(PC);
+                //if pc==bp, print the register information
+				if(findbp!=NULL){
+                 	print_registers(false, PC);
+                 	endflag=true;
+                 	break;
+             	}
+				continue;
 			}
 			//WD
 			if(strcmp(opcode->command, "WD")==0){
-				loc=PC;
-				if(endflag==true) break;
-				else continue;
+				bpoint* findbp = find_bpoint(PC);
+				//if pc==bp, print the register information
+				if(findbp!=NULL){
+                 	print_registers(false, PC);
+                 	endflag=true;
+                 	break;
+             	}
+				continue;
 			}
 			//RD
 			if(strcmp(opcode->command, "RD")==0){
-				loc=PC;
 				compare = 0;
-				if(endflag==true) break;
-				else continue;
+				//if pc==bp, print the register information
+				bpoint* findbp = find_bpoint(PC);
+				if(findbp!=NULL){
+                 	print_registers(false, PC);
+                 	endflag=true;
+                 	break;
+             	}
+				continue;
 			}
 			if(nb==1&&ib==1){
+				//get the display value
 				for(i=2;i>0;i--){
 					x=(loc+i)/16;
 					y=(loc+i)%16;
@@ -508,7 +547,7 @@ int run_func(){
 					else address+=mem[x][y]*mul;
 					mul=mul*256;
 				}
-				loc=PC;
+				//get the relative information
 				if(bb==1) address+=B;
 				else if(pb==1){
 					if(address>2047) address=address-4096;
@@ -516,178 +555,187 @@ int run_func(){
 				}
 			
 				if(xb==1) address+=X;
-				if(strcmp(opcode->command, "LDCH")==0) address-=X;
 
-				int end = 0;
-				x=(address+end)/16;
-				y=(address+end)%16;
-				
-				boolean isReg = false;
-				if(mem[x][y]==0){
-					 isReg=true;
-				}
-				if(isReg){
-					while(reg[x][y]!=0&&end<3){
-						end++;
-						x=(address+end)/16;
-						y=(address+end)%16;
-					}
-				}
-				else{
-					while(mem[x][y]!=0&&end<3){
-						end++;
-						x=(address+end)/16;
-						y=(address+end)%16;
-					}
+				//1 word is 3 byte
+				int end = 3;
+	
+				//if the instruction end with 'CH', get only one byte value
+				if((opcode->command)[2]=='C'&&(opcode->command)[3]=='H'){
+					end = 1;
 				}
 				
-				if((opcode->command)[2]=='C'&&(opcode->command)[2]=='H'){
-					x=address/16;
-					y=address%16;
-					if(isReg) data=reg[x][y];
-					else data=mem[x][y];
-				}
-				else{
-					mul=1;
-					for(i=end-1;i>=0;i--){
-						x=(address+i)/16;
-						y=(address+i)%16;
-						if(isReg) data+=reg[x][y]*mul;
-						else data+=mem[x][y]*mul;
-						mul = mul*256;				
-					}
+				mul=1;
+				for(i=end-1;i>=0;i--){
+					x=(address+i)/16;
+					y=(address+i)%16;
+					data+=mem[x][y]*mul;
+					mul = mul*256;				
 				}
 			}
 			else if(nb==1&&ib==0){
+				//get the display value
 				int tempaddr=0;
-				for(i=2;i>0;i--){
-					x=(loc+i)/16;
-					y=(loc+i)%16;
-					if(i==1) tempaddr+=(mem[x][y]%16)*mul;
-					else tempaddr+=mem[x][y]*mul;
-					mul=mul*256;	
+					for(i=2;i>0;i--){
+						x=(loc+i)/16;
+						y=(loc+i)%16;
+						if(i==1) tempaddr+=(mem[x][y]%16)*mul;
+						else tempaddr+=mem[x][y]*mul;
+						mul=mul*256;	
+					}
+					if(bb==1) tempaddr+=B;
+					else if(pb==1){
+						if(tempaddr>2047) address=address-4096;
+						 tempaddr+=PC;
+					}
+		
+					if(xb==1) tempaddr+=X;
+					
+					//get the data from the address found by the value at the display address
+					mul=1;
+					for(i=2;i>=0;i--){
+						x=(tempaddr+i)/16;
+						y=(tempaddr+i)%16;
+						address+=mem[x][y]*mul;
+						mul=mul*256;
+					}
 				}
-				loc=PC;
-				if(bb==1) tempaddr+=B;
-				else if(pb==1){
-					if(tempaddr>2047) address=address-4096;
-					 tempaddr+=PC;
+				else if(nb==0&&ib==1){
+					//get the immediate value from the object code.
+					for(i=2;i>0;i--){
+						x=(loc+i)/16;
+						y=(loc+i)%16;
+						if(i==1) data+=(mem[x][y]%16)*mul;
+						else data+=mem[x][y]*mul;
+						mul=mul*256;
+					}
+					if(bb==1) data+=B;
+					else if(pb==1) data+=PC;
+				
+					if(xb==1) data+=X;
 				}
-
-				if(xb==1) tempaddr+=X;
-
-				x=tempaddr/16;
-				y=tempaddr%16;
-				boolean isReg = false;
-				if(mem[x][y]==0){
-					 isReg=true;
-				}
-				if(isReg) address=reg[x][y];
-				else address=mem[x][y];
+			}	
+			//handle the instructions
+			//LDB
+			if(strcmp(opcode->command, "LDB")==0){
+				B = data;
 			}
-			else if(nb==0&&ib==1){
-				for(i=2;i>0;i--){
-					x=(loc+i)/16;
-					y=(loc+i)%16;
-					if(i==1) data+=(mem[x][y]%16)*mul;
-					else data+=mem[x][y]*mul;
-					mul=mul*256;
-				}
-				loc=PC;
-				if(bb==1) data+=B;
-				else if(pb==1) data+=PC;
-	
-				if(xb==1) data+=X;
-			}
-		}
-		//handle the instructions
-		//LDB
-		if(strcmp(opcode->command, "LDB")==0){
-			B = data;
-		}
-		//JSUB
-		if(strcmp(opcode->command, "JSUB")==0){
-			L = PC;
-			loc=address;
-			PC=address;
-		}
-		//COMP
-		if(strcmp(opcode->command, "COMP")==0){
-			if(A>data) compare=1;
-			else if (A==data) compare = 0;
-			else if (A<data) compare = -1;
-		}
-		//JEQ
-		if(strcmp(opcode->command, "JEQ")==0){
-			if(compare==0){
+			//JSUB
+			if(strcmp(opcode->command, "JSUB")==0){
+				L = PC;
 				loc=address;
 				PC=address;
 			}
-		}
-		//J
-		if(strcmp(opcode->command, "J")==0){
-			loc=address;
-			PC=address;
-		}
-		//LDA
-		if(strcmp(opcode->command, "LDA")==0){
-			A = data;
-		}
-		//LDT
-		if(strcmp(opcode->command, "LDT")==0){
-			T = data;
-		}
-		//JLT
-		if(strcmp(opcode->command, "JLT")==0){
-			if(compare==-1){
+			//COMP
+			if(strcmp(opcode->command, "COMP")==0){
+				if(A>data) compare=1;
+				else if (A==data) compare = 0;
+				else if (A<data) compare = -1;
+			}
+			//JEQ
+			if(strcmp(opcode->command, "JEQ")==0){
+				if(compare==0){
+					loc=address;
+					PC=address;
+				}
+			}
+			//J
+			if(strcmp(opcode->command, "J")==0){
 				loc=address;
 				PC=address;
 			}
-		}
-		//LDCH
-		if(strcmp(opcode->command, "LDCH")==0){
-			int temp = data, index=0;
-			while(temp!=0){
-				index++;
-				temp=temp/256;
+			//LDA
+			if(strcmp(opcode->command, "LDA")==0){
+				A = data;
 			}
-			temp=data;
-			for(i=X;i<index;i++){
-				A=temp%256;
-				temp=temp/256;
+			//LDT
+			if(strcmp(opcode->command, "LDT")==0){
+				T = data;
 			}
-		}
-		//RSUB
-		if(strcmp(opcode->command, "RSUB")==0){
-			loc=L;
-			PC=L;
-		}
-		//STL
-		if(strcmp(opcode->command, "STL")==0){
-			reg[x][y]=L;
-		}
-		//STA
-		if(strcmp(opcode->command, "STA")==0){
-			reg[x][y]=A;
-		}
-		//STCH
-		if(strcmp(opcode->command, "STCH")==0){
-			x = address/16;
-			y = address%16;
-			reg[x][y]=A%256;
-		}
-		//STX
-		if(strcmp(opcode->command, "STX")==0){
-			reg[x][y]=X;
-		}
-		//TIX
-		if(strcmp(opcode->command, "TIX")==0){
-			if(X>data) compare = 1;
-			else if(X==data) compare = 0;
-			else if(X<data) compare = -1;
-		}	
-		if(endflag==true) break;
+			//JLT
+			if(strcmp(opcode->command, "JLT")==0){
+				if(compare==-1){
+					loc=address;
+					PC=address;
+				}
+			}
+			//LDCH
+			if(strcmp(opcode->command, "LDCH")==0){
+				A=data;
+			}
+			//RSUB
+			if(strcmp(opcode->command, "RSUB")==0){
+				loc=L;
+				PC=L;
+			}
+			//STL
+			if(strcmp(opcode->command, "STL")==0){
+				//store the information into the memory per one byte
+				int temp = L, index=0;
+				while(temp!=0){
+					index++;
+					temp=temp/256;
+				}
+				temp=L;
+				for(i=2;i>=0;i--){
+					x=(address+i)/16;
+					y=(address+i)%16;
+					mem[x][y]=temp%256;
+					temp=temp/256;
+				}
+			}
+			//STA
+			if(strcmp(opcode->command, "STA")==0){
+				//store the information into the memory per one byte
+				int temp = A, index=0;
+				while(temp!=0){
+					index++;
+					temp=temp/256;
+				}
+				temp=A;
+				for(i=2;i>=0;i--){
+					x=(address+i)/16;
+					y=(address+i)%16;
+					mem[x][y]=temp%256;
+					temp=temp/256;
+				}
+			}
+			//STCH
+			if(strcmp(opcode->command, "STCH")==0){
+				x = address/16;
+				y = address%16;
+				mem[x][y]=A%256;
+			}
+			//STX
+			if(strcmp(opcode->command, "STX")==0){
+				//store the information into the memroy per one byte
+				int temp = X, index=0;
+				while(temp!=0){
+					index++;
+					temp=temp/256;
+				}
+				temp = X;
+				for(i=2;i>=0;i--){
+					x=(address+i)/16;
+					y=(address+i)%16;
+					mem[x][y]=temp%256;
+					temp=temp/256;
+				}
+			}
+			//TIX
+			if(strcmp(opcode->command, "TIX")==0){
+				if(X>data) compare = 1;
+				else if(X==data) compare = 0;
+				else if(X<data) compare = -1;
+			}
+			//if PC==bp, prnit the register information
+			bpoint* findbp = find_bpoint(PC);
+           	if(findbp!=NULL){
+               	print_registers(false, PC);
+               	endflag=true;
+    			break;
+	       	}
 	}	
+	//print the register information when the program is finished
 	if(PC>=totalLength&&endflag==false){
 		print_registers(true, PC);
 	}	

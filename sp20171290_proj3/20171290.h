@@ -42,6 +42,7 @@ typedef struct mod_node{
 	struct mod_node* ptr;
 }mod_node;
 
+//define the linked list node of ESTAB
 typedef struct estab{
 	char control[10];
 	char symbol[10];
@@ -50,12 +51,14 @@ typedef struct estab{
 	struct estab* ptr;
 }estab;
 
+//define the linked list node for storing reference symbol
 typedef struct refer{
 	char number[3];
 	char name[10];
 	struct refer* ptr;
 }refer;
 
+//define the linked list node of breakpoints
 typedef struct bpoint{
 	int breakpoint;
 	struct bpoint* ptr;
@@ -89,20 +92,19 @@ int program_length;		//store the program length for obj code
 int base_reg;		//store the value of base register if base register is used for addressing
 
 int progaddr;		//store the start address of program
-int before_prog_length;
-int current_prog_addr;
-int execution_addr;
+int before_prog_length;	//store the previous program length
+int current_prog_addr;	//store the current program length
+int execution_addr;		//store the execution address read from obj file
 
-estab *estab_head;
-estab *estab_tail;
+estab *estab_head;	//head pointer of ESTAB linked list
+estab *estab_tail;	//tail pointer of ESTAB linked list
 
-refer *refer_head;
-refer *refer_tail;
+refer *refer_head;	//head pointer of reference linked list
+refer *refer_tail;	//tail pointer of reference linked list
 
-bpoint *bpoint_head;
-bpoint *bpoint_tail;
-int totalLength;
-int A, X, L, PC, B, S, T;
-int loc;
-int compare;
-int reg[65536][16];
+bpoint *bpoint_head;	//head pointer of breakpoint linked list
+bpoint *bpoint_tail;	//tail pointer of breakpoint linked list
+int totalLength;	//store the current program length
+int A, X, L, PC, B, S, T;	//store the register value
+int loc;	//store the current LOC value
+int compare;	//store the result of comparison instruction

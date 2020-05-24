@@ -220,10 +220,10 @@ int get_register(int reg){
 }
 
 void init_reg(){
-	int i, j;
+	/*int i, j;
 	for(i=0;i<65536;i++){
 		for(j=0;j<16;j++){
 			reg[i][j]=0;
 		}
-	}
+	}*/
 }

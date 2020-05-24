@@ -191,14 +191,15 @@ int main(){
 			push(sentence, index);
 		}
 		else if(strncmp(sentence, "progaddr",8)==0){
+			//set the program address
 			int res = progaddr_func(index);
 			int before_progaddr = progaddr;
-			if(res==-1){
+			if(res==-1){	//when the program address is not valid
 				progaddr = before_progaddr;
 				printf("check the address\n");
 				continue;
 			}
-			if(parameter_error == true){
+			if(parameter_error == true){	//the wrong character input
 				printf("Wrong hexadecimal\n");
 				progaddr = before_progaddr;
 				continue;
@@ -206,36 +207,35 @@ int main(){
 			push(sentence, index);
 		}
 		else if(strncmp(sentence, "loader", 6)==0){
+			//load the program to the memory		
 			free_estab();
 			totalLength=0;
-			char copysentence[100];
-			strncpy(copysentence, sentence, strlen(sentence));
 			int res = loader_func(index);
-			if(res==-1){
+			if(res==-1){	//wrong filename
 				printf("Please check the filename.\n");
 			}
-			else if(res==1){
+			else if(res==1){	//external symbol is duplicated
 				printf("duplicate external symbol.\n");
 			}
-			else if(res==2){
+			else if(res==2){	//use undefined external symbol
 				printf("undefined external symbol.\n");
 			}
-			else if(res==3){
+			else if(res==3){	//the program is loaded out of memory
 				printf("Out of Bound.\n");
 			}
 			else{
-				push(copysentence, index);
+				push(sentence, index);
 			}
 		}
 		else if(strncmp(sentence, "bp", 2)==0){
 			if(strcmp(sentence, "bp clear")==0){
-				free_bp();
+				free_bp();	//clear the breakpoints
 				printf("\t[ok] clear all breakpoints\n");
 			}
 			else{	
 				if(index>3){
 					bp_func();
-					if(parameter_error==true){
+					if(parameter_error==true){	//wrong hexadecimal input
 						printf("Wrong hexadecimal\n");
 						continue;
 					}
@@ -248,7 +248,7 @@ int main(){
 		}
 		else if(strcmp(sentence, "run")==0){
 			int res = run_func();
-			if(res==-1){
+			if(res==-1){	//when the breakpoint is strange
 				printf("Wrong instruction or, set break points on the variable or constants\n");
 				continue;
 			}
