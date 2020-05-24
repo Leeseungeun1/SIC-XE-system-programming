@@ -15,6 +15,7 @@ using object files
 	ex) loader prog1 prog2 progb
 	* split the program filename with space
 	* the format of the program file must be object file.
+	* you can link and load programs upto 3 programs
 	If you execute loader, you can check the ESTAB about input programs
  5. Set breakpoints
 	using 'bp' command, you can set breakpoints of the loaded program.

@@ -448,9 +448,9 @@ int run_func(){
 				set_register(reg2, get_register(reg2)+1);
 				int reg1Val = get_register(reg1);
 				int reg2Val = get_register(reg2);
-				if(reg2Val>reg1Val) compare=1;
-				else if(reg2Val==reg1Val) compare = 0;
-				else if (reg2Val<reg1Val) compare=-1;
+				if(reg2Val>reg1Val) compare=1;	//greater
+				else if(reg2Val==reg1Val) compare = 0;	//equal
+				else if (reg2Val<reg1Val) compare=-1;	//less
 			}
 			//if PC==bp, print the register information
 			bpoint* findbp = find_bpoint(PC);
@@ -627,9 +627,9 @@ int run_func(){
 			}
 			//COMP
 			if(strcmp(opcode->command, "COMP")==0){
-				if(A>data) compare=1;
-				else if (A==data) compare = 0;
-				else if (A<data) compare = -1;
+				if(A>data) compare=1;	//greater
+				else if (A==data) compare = 0;	//equal
+				else if (A<data) compare = -1;	//less
 			}
 			//JEQ
 			if(strcmp(opcode->command, "JEQ")==0){
@@ -723,9 +723,9 @@ int run_func(){
 			}
 			//TIX
 			if(strcmp(opcode->command, "TIX")==0){
-				if(X>data) compare = 1;
-				else if(X==data) compare = 0;
-				else if(X<data) compare = -1;
+				if(X>data) compare = 1;	//greater
+				else if(X==data) compare = 0;	//equal
+				else if(X<data) compare = -1;	//less
 			}
 			//if PC==bp, prnit the register information
 			bpoint* findbp = find_bpoint(PC);

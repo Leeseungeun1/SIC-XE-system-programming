@@ -265,6 +265,7 @@ void free_refer(){
 //check whether the program exceed the virtual memory
 int check_bound(){
 	estab *walk=estab_head;
+	totalLength = 0;
 	while(walk!=NULL){
 		totalLength = totalLength + walk->length;
 		walk=walk->ptr;

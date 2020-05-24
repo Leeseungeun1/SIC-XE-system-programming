@@ -1,5 +1,5 @@
 int loader_pass1(char* filename);
-int loader_pass2();
+int loader_pass2(char* filename);
 void link_to_estab(estab* newestab);
 void link_to_refer(refer* newrefer);
 void free_refer();
