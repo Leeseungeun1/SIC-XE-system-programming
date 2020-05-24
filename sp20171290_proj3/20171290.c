@@ -252,6 +252,7 @@ int main(){
 				printf("Wrong instruction or, set break points on the variable or constants\n");
 				continue;
 			}
+			push(sentence, index);
 		}
 		else printf("Command not found\n"); //wrong command	
     }

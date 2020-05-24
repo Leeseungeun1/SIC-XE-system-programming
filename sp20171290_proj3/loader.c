@@ -77,6 +77,7 @@ int loader_pass1(char* filename){
 				//if the symbol cannot be loaded within the virtual memory
 				if(new->address>addrend){
 					free(new);
+					fclose(fp);
 					 return 3;
 				}
 				new->length = 0;
@@ -185,13 +186,18 @@ int loader_pass2(char* filename){
 
 			//find reference symbol
 			refer* estabSYM = find_refer(mNumber);
-			if(estabSYM==NULL) return 2;
+			if(estabSYM==NULL) {
+				fclose(fp);
+				return 2;
+			}
 			estab* est;
 			if(strcmp(mNumber, "01")==0) est = find_progname(estabSYM->name);			
 			else est = find_progsymb(estabSYM->name);
 			
-			if(est==NULL)return 2;
-
+			if(est==NULL){
+				fclose(fp);
+				return 2;
+			}
 			//get the value of the reference symbol
 			for(i=bytenum+modaddr-1;i>=modaddr;i--){
 				int x=i/16;
