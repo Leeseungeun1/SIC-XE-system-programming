@@ -96,6 +96,7 @@ void free_symbol(){
 	}
 }
 
+//find program name from the ESTAB
 estab* find_progname(char* name){
 	estab* walk=estab_head;
 	while(walk!=NULL){
@@ -107,6 +108,7 @@ estab* find_progname(char* name){
 	return walk;
 }
 
+//find program symbol from the ESTAB
 estab* find_progsymb(char* name){
 	estab* walk=estab_head;
 	while(walk!=NULL){
@@ -116,6 +118,7 @@ estab* find_progsymb(char* name){
 	return walk;
 }
 
+//find the reference symbol matched with reference number
 refer* find_refer(char* number){
 	refer* walk = refer_head;
 	while(walk!=NULL){
@@ -125,6 +128,7 @@ refer* find_refer(char* number){
 	return walk;
 }
 
+//check whether there is a breakpoint matched with PC
 bpoint* find_bpoint(int number){
 	bpoint* walk= bpoint_head;
 	while(walk!=NULL){
@@ -134,6 +138,7 @@ bpoint* find_bpoint(int number){
 	return walk;
 }
 
+//free ESTAB
 void free_estab(){
 	while(estab_head!=NULL){
 		estab* temp = estab_head;
@@ -145,6 +150,7 @@ void free_estab(){
 	before_prog_length=0;
 }
 
+//print all stored breakpoints
 void print_bp(){
 	printf("\tbreakpoint\n");
 	printf("\t----------\n");
@@ -156,6 +162,7 @@ void print_bp(){
 	}
 }
 
+//delete the stored breakpoints
 void free_bp(){
 	while(bpoint_head!=NULL){
 		bpoint* walk = bpoint_head;
@@ -167,6 +174,7 @@ void free_bp(){
 	bpoint_tail=NULL;
 }
 
+//print the register information
 void print_registers(boolean end, int bp){
 	printf("A : %06X   X : %06X\n", A, X);
 	printf("L : %06X  PC : %06X\n", L, PC);
@@ -180,6 +188,7 @@ void print_registers(boolean end, int bp){
 	}
 }
 
+//find the instruction matched with the opcode
 op_node* find_opinst(char* hexa){
 	int i;
 	op_node* walk = NULL;
@@ -198,6 +207,7 @@ op_node* find_opinst(char* hexa){
 	return walk;
 }
 
+//set the register value
 void set_register(int reg, int value){
 	if(reg==0){ A=value;}
 	if(reg==1){ X=value;}
@@ -208,6 +218,7 @@ void set_register(int reg, int value){
 	if(reg==5){ T=value;}
 }
 
+//get the register value
 int get_register(int reg){
 	if(reg==0) return A;
 	if(reg==1) return X;
@@ -217,13 +228,4 @@ int get_register(int reg){
 	if(reg==4) return S;
 	if(reg==5) return T;
 	return -1;
-}
-
-void init_reg(){
-	/*int i, j;
-	for(i=0;i<65536;i++){
-		for(j=0;j<16;j++){
-			reg[i][j]=0;
-		}
-	}*/
 }

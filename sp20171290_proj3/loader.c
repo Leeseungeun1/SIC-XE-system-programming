@@ -28,7 +28,7 @@ int loader_pass1(char* filename){
 				fclose(fp);
 				return 1;
 			}
-			//store length
+			//store program length
 			sixteen = 1;
 			size =strlen(s)-1;	//strlen(s) includes '\n'
 			int length = 0;
@@ -41,13 +41,14 @@ int loader_pass1(char* filename){
 			new->address = before_prog_length + progaddr;
 			before_prog_length += length;
 			current_prog_addr=new->address;
+			//if program cannot be loaded within the virtual memory
 			if(current_prog_addr>addrend){
 				free(new);
 				return 3;
 			}
 			link_to_estab(new);
 		}
-		else if(s[0]=='D'){
+		else if(s[0]=='D'){		//store the symbol information 
 			int index=1;
 			size=strlen(s)-1;
 			while(index<size){
@@ -73,6 +74,7 @@ int loader_pass1(char* filename){
 				}
 				index=index+6;
 				new->address = current_prog_addr+curaddr;
+				//if the symbol cannot be loaded within the virtual memory
 				if(new->address>addrend){
 					free(new);
 					 return 3;
@@ -119,7 +121,7 @@ int loader_pass2(char* filename){
 				sixteen = sixteen*16;
 			}
 			for(i=9;i<strlen(s)-1;i=i+2){
-				//make the address to hexadecimal string
+				//load the object code to the memory
 				memnum=0;
 				if('A'<=s[i]&&s[i]<='F') memnum+=(s[i]-'A'+10)*16;
 				else memnum+=(s[i]-'0')*16;
@@ -132,6 +134,7 @@ int loader_pass2(char* filename){
 			}	
 		}
 		if(s[0]=='R'){
+			//store the reference number information
 			int index = 1;
 			size = strlen(s);
 			while(index<size){
@@ -152,9 +155,11 @@ int loader_pass2(char* filename){
 			}	
 		}
 		if(s[0]=='M'){
+			//relocation the reference symbol
 			char oper, mNumber[3];
 			sixteen=1;
 			int modaddr=0, bytenum=0, modmem=0, charsize=1;
+			//find the start address of relocation
 			for(i=6;i>0;i--){
 				if('A'<=s[i]&&s[i]<='F') modaddr+=(s[i]-'A'+10)*sixteen;
 				else if('0'<=s[i]&&s[i]<='9') modaddr+=(s[i]-'0')*sixteen;
@@ -162,6 +167,7 @@ int loader_pass2(char* filename){
 			}
 			modaddr+=startaddr;
 
+			//get the number of halfbytes to relocate
 			sixteen=1;
 			for(i=8;i>6;i--){
 				if('A'<=s[i]&&s[i]<='F') bytenum+=(s[i]-'A'+10)*sixteen;
@@ -171,11 +177,13 @@ int loader_pass2(char* filename){
 			bytenum=(bytenum/2)+(bytenum%2);
 			oper=s[9];		
 	
+			//get the reference number
 			for(i=0;i<2;i++){
 				mNumber[i]=s[i+10];
 			}
 			mNumber[2]='\0';
 
+			//find reference symbol
 			refer* estabSYM = find_refer(mNumber);
 			if(estabSYM==NULL) return 2;
 			estab* est;
@@ -183,6 +191,8 @@ int loader_pass2(char* filename){
 			else est = find_progsymb(estabSYM->name);
 			
 			if(est==NULL)return 2;
+
+			//get the value of the reference symbol
 			for(i=bytenum+modaddr-1;i>=modaddr;i--){
 				int x=i/16;
 				int y=i%16;
@@ -191,9 +201,11 @@ int loader_pass2(char* filename){
 				charsize=charsize*256;	
 			}
 
+			//calculate with the reference symbol
 			if(oper=='+') modmem=modmem+(est->address);
 			else if(oper=='-') modmem = modmem-(est->address);
 	
+			//store the modification value to the memory
 			for(i=bytenum+modaddr-1;i>=modaddr;i--){
 				int x=i/16;
 				int y=i%16;
@@ -202,8 +214,9 @@ int loader_pass2(char* filename){
 			}
 		}
 		if(s[0]=='E'){
+			//get the execution address
 			sixteen=1;
-			execution_addr=0;
+			execution_addr=progaddr;
 			for(i=6;i>0;i--){
 				if('A'<=s[i]&&s[i]<='F') execution_addr+=(s[i]-'A'+10)*sixteen;
 				else if('0'<=s[i]&&s[i]<='9') execution_addr+=(s[i]-'0')*sixteen;
@@ -216,6 +229,7 @@ int loader_pass2(char* filename){
 	return 0;
 }
 
+//insert new ESTAB node to linked list
 void link_to_estab(estab* new){
 	if(estab_head==NULL){
 		estab_head=new;
@@ -226,6 +240,7 @@ void link_to_estab(estab* new){
 	estab_tail=new;
 }
 
+//insert new refer node to linked list
 void link_to_refer(refer* new){
 	if(refer_head==NULL){
 		refer_head=new;
@@ -236,6 +251,7 @@ void link_to_refer(refer* new){
 	refer_tail=new;
 }
 
+//free refer linked list
 void free_refer(){
 	while(refer_head!=NULL){
 		refer* walk = refer_head;
@@ -246,6 +262,7 @@ void free_refer(){
 	refer_tail=NULL;
 }
 
+//check whether the program exceed the virtual memory
 int check_bound(){
 	estab *walk=estab_head;
 	while(walk!=NULL){
@@ -258,6 +275,7 @@ int check_bound(){
 	return 0;
 }
 
+//print load map
 void print_estab(){
 	printf("control symbol address length\n");
 	printf("section name\n");
@@ -284,5 +302,4 @@ void print_estab(){
 	T=0;
 	PC=progaddr;
 	L = totalLength;
-	init_reg();
 }

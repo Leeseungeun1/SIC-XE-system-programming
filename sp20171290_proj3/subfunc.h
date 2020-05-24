@@ -14,4 +14,3 @@ void print_registers(boolean end, int bp);
 op_node* find_opinst(char* hexa);
 void set_register(int reg, int value);
 int get_register(int reg);
-void init_reg();
